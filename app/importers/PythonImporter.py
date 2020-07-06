@@ -18,9 +18,8 @@ Author(s): Dmitriy Dubson (d.dubson@gmail.com)
 from PyQt5 import QtCore
 
 from db.entities.host import hostObj
-from scripts.python import pyShodan, macvendors
+from scripts.python import pyShodan, macvendors, riskIQ
 from time import time
-
 
 class PythonImporter(QtCore.QThread):
     tick = QtCore.pyqtSignal(int, name="changed")                       # New style signal
@@ -32,7 +31,12 @@ class PythonImporter(QtCore.QThread):
         QtCore.QThread.__init__(self, parent=None)
         self.output = ''
         self.hostIp = ''
-        self.pythonScriptDispatch = {'pyShodan': pyShodan.PyShodanScript(), 'macvendors': macvendors.macvendorsScript()}
+        self.pythonScriptDispatch = {
+            'pyShodan': pyShodan.PyShodanScript(),
+            'macvendors': macvendors.macvendorsScript(),
+            'riskIQ': riskIQ.riskIQScript()
+        }
+        self.apiCredentials = {}
         self.pythonScriptObj = None
 
     def tsLog(self, msg):
@@ -49,6 +53,9 @@ class PythonImporter(QtCore.QThread):
 
     def setOutput(self, output):
         self.output = output
+    
+    def setApiCredentials(self, creds):
+        self.pythonScriptDispatch['riskIQ'] = riskIQ.riskIQScript(creds['riskIQ'])
 
     def run(self): # it is necessary to get the qprocess to send it back to the scheduler when we're done
         try:

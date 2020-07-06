@@ -31,11 +31,14 @@ class AppSettings():
             log.info('Legion config is missing. Please reclone.')
             os.exit(1)
         else:
-            log.info('Loading settings file..')
+            log.info('Loading settings file...')
             self.actions = QtCore.QSettings('./legion.conf', QtCore.QSettings.NativeFormat)
 
     def getGeneralSettings(self):
         return self.getSettingsByGroup("GeneralSettings")
+    
+    def getApiCredentials(self):
+        return self.getSettingsByGroup("ApiCredentials")
 
     def getBruteSettings(self):
         return self.getSettingsByGroup("BruteSettings")
@@ -159,6 +162,11 @@ class AppSettings():
         self.actions.setValue('process-tab-detail', newSettings.gui_process_tab_detail)
         self.actions.endGroup()
 
+        self.actions.beginGroup('ApiCredentials')
+        self.actions.setValue('riskiq-username', newSettings.api_riskiq_username)
+        self.actions.setValue('riskiq-api-key', newSettings.api_riskiq_api_key)
+        self.actions.endGroup()
+
         self.actions.beginGroup('HostActions')
         for a in newSettings.hostActions:
             self.actions.setValue(a[1], [a[0], a[2]])
@@ -230,6 +238,10 @@ class Settings():
         self.gui_process_tab_column_widths = "125,0,100,150,100,100,100,100,100,100,100,100,100,100,100,100,100"
         self.gui_process_tab_detail = False
 
+        # API Creds
+        self.api_riskiq_username = ""
+        self.api_riskiq_api_key = ""
+
         self.hostActions = []
         self.portActions = []
         self.portTerminalActions = []
@@ -244,6 +256,7 @@ class Settings():
                 self.stagedNmapSettings = appSettings.getStagedNmapSettings()
                 self.toolSettings = appSettings.getToolSettings()
                 self.guiSettings = appSettings.getGUISettings()
+                self.apiCredentials = appSettings.getApiCredentials()
                 self.hostActions = appSettings.getHostActions()
                 self.portActions = appSettings.getPortActions()
                 self.portTerminalActions = appSettings.getPortTerminalActions()
@@ -286,6 +299,10 @@ class Settings():
                 self.gui_process_tab_column_widths = self.guiSettings['process-tab-column-widths']
                 self.gui_process_tab_detail = self.guiSettings['process-tab-detail']
 
+                # api creds
+                self.api_riskiq_username = self.apiCredentials['riskiq-username']
+                self.api_riskiq_api_key = self.apiCredentials['riskiq-api-key']
+
             except KeyError as e:
                 log.info('Something went wrong while loading the configuration file. Falling back to default ' +
                          'settings for some settings.')
@@ -296,7 +313,6 @@ class Settings():
         if type(other) is type(self):
             return self.__dict__ == other.__dict__
         return False
-
 
 if __name__ == "__main__":
     settings = AppSettings()

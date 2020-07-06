@@ -22,6 +22,7 @@ from db.database import Base
 from db.entities.cve import cve
 from db.entities.os import osObj
 from db.entities.port import portObj
+from db.entities.osint import osintObj
 
 
 class hostObj(Base):
@@ -60,9 +61,13 @@ class hostObj(Base):
     latitude = Column(String)
     distance = Column(String)
 
+    # Host Information
+    extrainfo = Column(String)
+
     # host relationships
     os = relationship(osObj)
     ports = relationship(portObj)
+    osint = relationship(osintObj)
     cves = relationship(cve)
 
     def __init__(self, **kwargs):
@@ -89,3 +94,4 @@ class hostObj(Base):
         self.latitude = kwargs.get('latitude') or 'unknown'
         self.isp = kwargs.get('isp') or 'unknown'
         self.asn = kwargs.get('asn') or 'unknown'
+        self.extrainfo = kwargs.get('extrainfo') or ''

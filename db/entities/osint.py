@@ -12,29 +12,22 @@ Copyright (c) 2020 GoVanguard
 
     You should have received a copy of the GNU General Public License along with this program.
     If not, see <http://www.gnu.org/licenses/>.
-
-Author(s): Dmitriy Dubson (d.dubson@gmail.com)
 """
-from sqlalchemy import Integer, Column, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import String, Column, Integer, ForeignKey
 
 from db.database import Base
 
 
-class portObj(Base):
-    __tablename__ = 'portObj'
-    portId = Column(String)
+class osintObj(Base):
+    __tablename__ = 'osint'
     id = Column(Integer, primary_key=True)
-    protocol = Column(String)
-    state = Column(String)
+    source = Column(String)
+    sourceUrl = Column(String)
+    tags = Column(String)
     hostId = Column(String, ForeignKey('hostObj.id'))
-    serviceId = Column(String, ForeignKey('serviceObj.id'))
-    scriptId = Column(String, ForeignKey('l1ScriptObj.id'))
-    services = relationship('serviceObj')
 
-    def __init__(self, portId, protocol, state, host, service=''):
-        self.portId = portId
-        self.protocol = protocol
-        self.state = state
-        self.serviceId = service
-        self.hostId = host
+    def __init__(self, source, sourceUrl, tags='', hostid=''):
+        self.source = source
+        self.sourceUrl = sourceUrl
+        self.tags = tags
+        self.hostId = hostId

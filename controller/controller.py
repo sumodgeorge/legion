@@ -34,7 +34,6 @@ except:
 from app.logic import *
 from app.settings import *
 
-
 class Controller:
 
     # initialisations that will happen once - when the program is launched
@@ -83,9 +82,16 @@ class Controller:
 
     def initPythonImporter(self):
         self.pythonImporter = PythonImporter()
+        self.pythonImporter.setApiCredentials({
+            'riskIQ': {
+                'username': self.settings.api_riskiq_username,
+                'apiKey': self.settings.api_riskiq_api_key
+            }
+        })
         self.pythonImporter.done.connect(self.importFinished)
         self.pythonImporter.schedule.connect(self.scheduler)              # run automated attacks
         self.pythonImporter.log.connect(self.view.ui.LogOutputTextView.append)
+        self.pythonImporter.tsLog("\n" + str(self.pythonScriptDispatch.keys()) + "\n")
 
     def initScreenshooter(self):
         # screenshot taker object (different thread)
